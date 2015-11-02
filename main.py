@@ -4,9 +4,9 @@ from delta_debugger import *
 from run_case import *
 from test_case import *
 
-failing_test_dir = '/Users/dillon/PythonWorkspace/token_reduce/dummy'
-failing_test_name = 'test_0.cc'
-failing_test_path = join(failing_test_dir, failing_test_name)
+failing_test_dir = '/Users/dillon/PythonWorkspace/token_reduce/c_example'
+failing_test_name = 'test_0'
+failing_test_path = join(failing_test_dir, failing_test_name + '.cc')
 reduce_dir = './suites'
 
 def main():
