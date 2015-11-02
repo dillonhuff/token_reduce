@@ -11,26 +11,39 @@ def reduce_failing_case(reduce_path, test_case, fail_msg):
     return res
 
 def delta_debug(reduce_path, test_case, fail_msg, grain):
+    print 'CALLED DDMIN'
+    print test_case.text
+    print 'grain = ', str(grain)
     subsets = split_into_subsets(test_case, grain)
+    print '# subsets = ', str(len(subsets))
+    print 'ALL SUBSETS'
+    for subset in subsets:
+        print 'SUBSET'
+        print_tokens(subset)
     fail_subset = first_failing_case(reduce_path, test_case.name, subsets, fail_msg)
 
     if not fail_subset is None:
+        print 'SUBSET FAIL'
         new_case = TestCase(test_case.name, untokenize(fail_subset))
         return delta_debug(reduce_path, new_case, fail_msg, 2)
 
     test_tokens = tokenize(test_case.text)
+    test_size = len(test_tokens)    
     subset_comps = subset_complements(test_tokens, subsets)
     fail_complement = first_failing_case(reduce_path, test_case.name, subset_comps, fail_msg)
     
     if not fail_complement is None:
         print 'COMPLEMENT FAIL'
+        print 'test_size', str(test_size)
         new_case = TestCase(test_case.name, untokenize(fail_complement))
         print new_case.text
-        return new_case
         new_grain = max(grain - 1, 2)
+        print 'grain', str(new_grain)
+#        return new_case
         return delta_debug(reduce_path, new_case, fail_msg, new_grain)
 
-    test_size = len(test_tokens)
+    print 'test_size = ', str(test_size)
+    print 'grain = ', str(grain)
     if grain < test_size:
         print 'INCREASE GRAIN'
         new_grain = min(test_size, 2*grain)
@@ -41,7 +54,9 @@ def delta_debug(reduce_path, test_case, fail_msg, grain):
 
 def split_into_subsets(test_case, grain):
     tokens = tokenize(test_case.text)
-    return list(split_seq(tokens, len(tokens)/grain))
+    size = len(tokens) / grain
+    assert(size != 0)
+    return list(split_seq(tokens, size))
 
 def split_seq(iterable, size):
     it = iter(iterable)
@@ -60,17 +75,17 @@ def complement(tokens, subset):
     assert(subset != [])
     startLoc = sublist_exists(tokens, subset)
     if startLoc == 0:
-        print 'Start location is zero'
+#        print 'Start location is zero'
         complement = tokens[len(subset):]
     else:
         complement = tokens[0:startLoc] + tokens[startLoc + len(subset):]    
-    print 'TEST COMPLEMENT'
-    print 'Tokens'
-    print_tokens(tokens)
-    print 'Subset'
-    print_tokens(subset)
-    print 'Complement'
-    print_tokens(complement)
+    # print 'TEST COMPLEMENT'
+    # print 'Tokens'
+    # print_tokens(tokens)
+    # print 'Subset'
+    # print_tokens(subset)
+    # print 'Complement'
+    # print_tokens(complement)
     return complement
 
 def print_tokens(tokens):
@@ -87,8 +102,8 @@ def same_tokens(l, r):
     
 def sublist_exists(tokens, sublist):
     for i in range(len(tokens)-len(sublist)+1):
-        print_tokens(sublist)
-        print_tokens(tokens[i:i+len(sublist)])
+#        print_tokens(sublist)
+#        print_tokens(tokens[i:i+len(sublist)])
         if same_tokens(sublist, tokens[i:i+len(sublist)]):
             return i
     print 'tokens'

@@ -8,7 +8,9 @@ def tokenize(str):
 
 def untokenize(tokens):
     newStr = ''
-    for t in tokens:
-        if not t.silenced:
-            newStr += t.string + '\n'
+    for i in xrange(0, len(tokens)):
+        if not tokens[i].silenced:
+            newStr += tokens[i].string
+        if not i == len(tokens) - 1:
+            newStr += '\n'
     return newStr
